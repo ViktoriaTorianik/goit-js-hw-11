@@ -1,3 +1,4 @@
+import axios from "axios";
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = "37602273-ee76d535e0302dd8a6c170e2a"
 let page = 1
@@ -7,32 +8,21 @@ const galleryEl = document.querySelector('.gallery')
 const loadMore = document.querySelector('.load-more')
 
 
-loadMore.addEventListener('click', onNextPage) 
+async function fetchPhoto(userFetch) {
+ 
+    const response = await axios.get(`${BASE_URL}?key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&q=${userFetch}&page=${page}&per_page=40`)
+    console.log(response);
+ 
+  }
+ 
+//   const response = await fetch(`${BASE_URL}?key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&q=${userFetch}&page=${page}&per_page=40`)
+//   if (!response.ok) {
+//     throw new Error(response.statusText)
+//   }
+//   return response.json()
+// }   
 
-function onNextPage() {
-  
-  page += 1
-  fetchPhoto(userRequest)
-    .then((data) => {
-      (galleryEl.insertAdjacentHTML("beforeend", creatMarkupCard(data.hits)))
-      console.log(data.hits);
-      if (data.page===data.totalHits){
-        loadMore.hidden = true
-      }
-    })
-    .catch(console.log());
-  
-}
-function fetchPhoto(userFetch) {
-  return fetch(`${BASE_URL}?key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&q=${userFetch}&page=${page}&per_page=40`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.statusText)
-      }
-      return response.json()
-    });
-}
-
+console.log(fetchPhoto('cat'));
 function creatMarkupCard(array) {
   return array.map(({ webformatURL, largeImageURL,tags,likes,views,comments,downloads }) => `<div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" class="photo" loading="lazy" />
@@ -53,24 +43,38 @@ function creatMarkupCard(array) {
 </div>`).join('')
 }
 
-
-
 formEl.addEventListener('submit', sendRequest)
-function sendRequest(e) {
-    e.preventDefault()
-    userRequest = e.target.firstElementChild.value.trim()
-    e.target.firstElementChild.value = ""
-    if (userRequest === "") {
-        return
-    }
-    console.log(userRequest);
-  fetchPhoto(userRequest)
-    .then((data) => {
+ function sendRequest(e) {
+  e.preventDefault()
+  userRequest = e.target.firstElementChild.value.trim()
+  e.target.firstElementChild.value = ""
+  if (userRequest === "") {
+    return
+  }
+  console.log(userRequest);
+  
+   fetchPhoto(userRequest)
+    .then(({data}) => {
       (galleryEl.innerHTML = creatMarkupCard(data.hits))
       if (data.page!==data.totalHits){
         loadMore.hidden = false
       }
     })
     .catch(console.log())
-    
+ }
+loadMore.addEventListener('click', onNextPage) 
+
+function onNextPage() {
+  
+  page += 1
+  fetchPhoto(userRequest)
+    .then((data) => {
+      (galleryEl.insertAdjacentHTML("beforeend", creatMarkupCard(data.hits)))
+      console.log(data.hits);
+      if (data.page===data.totalHits){
+        loadMore.hidden = true
+      }
+    })
+    .catch(console.log());
+  
 }
