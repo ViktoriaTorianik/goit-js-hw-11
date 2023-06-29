@@ -25,10 +25,15 @@ function sendRequest(e) {
   fetchPhoto(userRequest).then((data) => 
   {
     (galleryEl.innerHTML = creatMarkupCard(data.hits))
-   
+    console.log(data.totalHits);
+    console.log(perPage);
     if (perPage < data.totalHits) {
       loadMore.hidden = false;
-     Notiflix.Notify.success("Hooray! We found totalHits images.")
+     Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`)
+    }
+    if(perPage > data.totalHits) {
+      loadMore.hidden = true;
+     Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`)
     }
     if (data.hits.length === 0) {
       Notiflix.Notify.warning('Sorry, there are no images matching your search query. Please try again.')
