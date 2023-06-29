@@ -20,21 +20,23 @@ function sendRequest(e) {
   console.log(userRequest);
   fetchPhoto(userRequest).then((data) => 
     (galleryEl.innerHTML = creatMarkupCard(data.hits)))
-
+  if (perPage !== data.totalHits) {
   loadMore.hidden = false
+  }
+  
+  // loadMore.hidden = false
 }
 loadMore.addEventListener('click', onNextPage) 
 
 function onNextPage() {
-  
+ 
    page += 1
-  fetchPhoto(userRequest)
+  fetchPhoto(userRequest, page)
     .then((data) => {
       galleryEl.insertAdjacentHTML("beforeend", creatMarkupCard(data.hits))
-      console.log(data.hits);
-      if (data.page===data.totalHits){
-        loadMore.hidden = true
-      }
+      // if (data.page!==data.totalHits/40){
+      //   loadMore.hidden = true
+      // }
     })
     .catch(console.log());
   
