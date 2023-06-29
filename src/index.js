@@ -1,50 +1,16 @@
-import axios from "axios";
-const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = "37602273-ee76d535e0302dd8a6c170e2a"
+
+import Notiflix from 'notiflix';
+import refs from './serves/refs';
+import { creatMarkupCard } from './crateMarcup';
+import { fetchPhoto } from './serves/fetch';
+import { perPage } from './serves/fetch';
+const{formEl,galleryEl,loadMore}=refs
 let page = 1
 let userRequest = null
-const formEl = document.querySelector('.search-form')
-const galleryEl = document.querySelector('.gallery')
-const loadMore = document.querySelector('.load-more')
 
-
-async function fetchPhoto(userFetch) {
- 
-    const response = await axios.get(`${BASE_URL}?key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&q=${userFetch}&page=${page}&per_page=40`)
-    console.log(response);
- 
-  }
- 
-//   const response = await fetch(`${BASE_URL}?key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&q=${userFetch}&page=${page}&per_page=40`)
-//   if (!response.ok) {
-//     throw new Error(response.statusText)
-//   }
-//   return response.json()
-// }   
-
-console.log(fetchPhoto('cat'));
-function creatMarkupCard(array) {
-  return array.map(({ webformatURL, largeImageURL,tags,likes,views,comments,downloads }) => `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" class="photo" loading="lazy" />
-  <div class="info">
-    <p class="info-item">
-      <b>Likes ${likes}</b>
-    </p>
-    <p class="info-item">
-      <b>Views ${views}</b>
-    </p>
-    <p class="info-item">
-      <b>Comments ${comments}</b>
-    </p>
-    <p class="info-item">
-      <b>Downloads ${downloads}</b>
-    </p>
-  </div>
-</div>`).join('')
-}
 
 formEl.addEventListener('submit', sendRequest)
- function sendRequest(e) {
+function sendRequest(e) {
   e.preventDefault()
   userRequest = e.target.firstElementChild.value.trim()
   e.target.firstElementChild.value = ""
@@ -52,24 +18,19 @@ formEl.addEventListener('submit', sendRequest)
     return
   }
   console.log(userRequest);
-  
-   fetchPhoto(userRequest)
-    .then(({data}) => {
-      (galleryEl.innerHTML = creatMarkupCard(data.hits))
-      if (data.page!==data.totalHits){
-        loadMore.hidden = false
-      }
-    })
-    .catch(console.log())
- }
+  fetchPhoto(userRequest).then((data) => 
+    (galleryEl.innerHTML = creatMarkupCard(data.hits)))
+
+  loadMore.hidden = false
+}
 loadMore.addEventListener('click', onNextPage) 
 
 function onNextPage() {
   
-  page += 1
+   page += 1
   fetchPhoto(userRequest)
     .then((data) => {
-      (galleryEl.insertAdjacentHTML("beforeend", creatMarkupCard(data.hits)))
+      galleryEl.insertAdjacentHTML("beforeend", creatMarkupCard(data.hits))
       console.log(data.hits);
       if (data.page===data.totalHits){
         loadMore.hidden = true
@@ -77,4 +38,6 @@ function onNextPage() {
     })
     .catch(console.log());
   
+    
 }
+export { userRequest };
