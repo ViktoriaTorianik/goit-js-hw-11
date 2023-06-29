@@ -4,7 +4,7 @@ const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = "37602273-ee76d535e0302dd8a6c170e2a";
 
 let page = 1;
-const perPage = 5;
+const perPage = 40;
 
 async function fetchPhoto(userFetch, page) {
      try {
