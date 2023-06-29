@@ -19,13 +19,18 @@ function sendRequest(e) {
   }
   console.log(userRequest);
   fetchPhoto(userRequest).then((data) => 
-    (galleryEl.innerHTML = creatMarkupCard(data.hits)))
-  if (perPage !== data.totalHits) {
-  loadMore.hidden = false
-  }
+  {(galleryEl.innerHTML = creatMarkupCard(data.hits))  
+    if (perPage < data.totalHits) {
+      loadMore.hidden = false;
+     Notiflix.Notify.success("Hooray! We found totalHits images.")
+    }
+    if (data.hits.length === 0) {
+      Notiflix.Notify.warning('Sorry, there are no images matching your search query. Please try again.')
+    loadMore.hidden = true
+    }
+    })
   
-  // loadMore.hidden = false
-}
+};
 loadMore.addEventListener('click', onNextPage) 
 
 function onNextPage() {
@@ -34,9 +39,13 @@ function onNextPage() {
   fetchPhoto(userRequest, page)
     .then((data) => {
       galleryEl.insertAdjacentHTML("beforeend", creatMarkupCard(data.hits))
-      // if (data.page!==data.totalHits/40){
-      //   loadMore.hidden = true
-      // }
+      console.log(data.hits.length);
+      console.log(data.totalHits);
+      console.log(perPage*page);
+      if (data.totalHits<=perPage*page){
+        loadMore.hidden = true
+        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
+      }
     })
     .catch(console.log());
   
