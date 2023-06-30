@@ -59,6 +59,7 @@ function onNextPage() {
         loadMore.hidden = true
         Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
       }
+      lightbox.refresh()
     })
     .catch(error => {
       Notiflix.Notify.failure(
