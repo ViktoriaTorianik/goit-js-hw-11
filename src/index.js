@@ -12,9 +12,8 @@ var lightbox = new SimpleLightbox('.gallery a',
 { captionDelay: "250"})
 const { formEl, galleryEl, loadMore } = refs
 
-let page = 1
+let page = 0
 let userRequest = null
-
 
 formEl.addEventListener('submit', sendRequest)
 function sendRequest(e) {
@@ -24,7 +23,8 @@ function sendRequest(e) {
   if (userRequest === "") {
     return
   }
-  fetchPhoto(userRequest).then((data) => 
+  page=1
+  fetchPhoto(userRequest, page).then((data) => 
   {
     (galleryEl.innerHTML = creatMarkupCard(data.hits))
     if (perPage < data.totalHits) {

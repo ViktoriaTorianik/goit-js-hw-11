@@ -1,4 +1,4 @@
-function creatMarkupCard(creatCards) {
+function creatMarkupCard(creatCards,page) {
   
   return creatCards
         .map(creatCard => `<div class="photo-card">
