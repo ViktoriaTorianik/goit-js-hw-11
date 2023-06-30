@@ -1,7 +1,8 @@
 function creatMarkupCard(creatCards,page) {
   
   return creatCards
-        .map(creatCard => `<div class="photo-card">
+    .map(creatCard => `<a href="${creatCard.largeImageURL}" class="gallery__link"> 
+        <div class="photo-card">
   <img src="${creatCard.webformatURL}" alt="${creatCard.tags}" class="photo" loading="lazy" />
   <div class="info">
     <p class="info-item">
